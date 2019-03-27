@@ -1,2 +1,2 @@
 # FZA_lensless_imaging
-This MATLAB code allows simulation and iterative twin image free reconstruction of an inline (in-line) hologram recorded with plane waves. 
+This MATLAB code allows simulation/experiment and compressive reconstruction of an zone plate hologram recorded using Fresnel zone aperture (FZA). 
