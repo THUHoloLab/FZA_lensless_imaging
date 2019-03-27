@@ -3,8 +3,8 @@ clearvars; clc; close all
 addpath('./functions');
 
 %% Pingole imaging
-% img = im2double(imread('.\image\THU.png'));
-img = im2double(imread('cameraman.tif'));
+img = im2double(imread('.\image\THU.png'));
+% img = im2double(imread('cameraman.tif'));
 
 di = 3;
 z1 = 20;    x1 = 0;    y1 = 0;
@@ -16,7 +16,9 @@ Nx = 512;
 Ny = 512;
 
 Im = pinhole(img,di,x1,y1,z1,Lx1,dp,Nx);
-figure,imshow(Im,[]);title('Original image')
+figure,imagesc(Im);title('Original image')
+colormap gray;
+axis image off
 
 %% Imaging processing
 S = 2*dp*Nx;         % aperture diameter
@@ -39,8 +41,12 @@ mask = FZP(S,dp,bi);
 I = conv2(Im,mask,'same');
 % I1 = MyForwardOperatorPropagation(Im,H);
 
-figure,imshow(mask,[]);title('FZP pattern')
-figure,imshow(I,[]);title('Observed imaging')
+figure,imagesc(mask);title('FZA pattern')
+colormap gray;
+axis image off
+figure,imagesc(I);title('Observed imaging')
+colormap gray;
+axis image off
 
 %% back propagation
 
