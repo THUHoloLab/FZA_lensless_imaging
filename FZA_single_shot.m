@@ -3,43 +3,34 @@ clearvars; clc; close all
 addpath('./functions');
 
 %% Pingole imaging
-img = im2double(imread('.\image\THU.png'));
-% img = im2double(imread('cameraman.tif'));
+% img = im2double(imread('.\image\THU.png'));
+img = im2double(imread('cameraman.tif'));
 
-di = 3;
+di = 3;         % the distance from mask to sensor
 z1 = 20;    x1 = 0;    y1 = 0;
 
-Lx1 = 20;
+Lx1 = 20;       % object size
 
-dp = 0.01;
-Nx = 512;
+dp = 0.01;      % pixel pitch
+Nx = 512;       % pixel numbers
 Ny = 512;
 
+% generate the original imaging to be reconstructed
 Im = pinhole(img,di,x1,y1,z1,Lx1,dp,Nx);
 figure,imagesc(Im);title('Original image')
 colormap gray;
 axis image off
 
 %% Imaging processing
-S = 2*dp*Nx;         % aperture diameter
-% b = pi/(Nx*dp^2);  % optimal beta
+S = 2*dp*Nx;        % aperture diameter
+r1 = 0.23;          % FZA constant
 
-b = 30;
 M = di/z1;
-bi = b/(1+M)^2;
+ri = (1+M)*r1;
 
-fu_max = 0.5 / dp;
-fv_max = 0.5 / dp;
-du = 2*fu_max / (Nx);
-dv = 2*fv_max / (Ny);
+mask = FZA(S,2*Nx,ri);  % generate the FZA mask
 
-[u,v] = meshgrid(-fu_max:du:fu_max-du,-fv_max:dv:fv_max-dv);
-H = 1i*exp(-1i*(pi^2/bi)*(u.^2 + v.^2));  % fresnel transfer function 
-
-mask = FZP(S,dp,bi);
-
-I = conv2(Im,mask,'same');
-% I1 = MyForwardOperatorPropagation(Im,H);
+I = conv2(Im,mask,'same')*2*dp*dp/ri^2;
 
 figure,imagesc(mask);title('FZA pattern')
 colormap gray;
@@ -50,27 +41,33 @@ axis image off
 
 %% back propagation
 
+fu_max = 0.5 / dp;
+fv_max = 0.5 / dp;
+du = 2*fu_max / (Nx);
+dv = 2*fv_max / (Ny);
+
+[u,v] = meshgrid(-fu_max:du:fu_max-du,-fv_max:dv:fv_max-dv);
+H = 1i*exp(-1i*(pi*ri^2)*(u.^2 + v.^2));  % fresnel transfer function 
+
 Or = MyAdjointOperatorPropagation(I,H);
 
 figure,imagesc(real(Or));title('Reconstructed image (BP)')
 colormap gray;
-% colorbar
 axis equal off tight
 
-%% Propagation operator (4)
+%% Propagation operator 
 A = @(obj) MyForwardOperatorPropagation(obj,H);  % forward propagation operator
 AT = @(I) MyAdjointOperatorPropagation(I,H);  % backward propagation operator
 
-%% TwIST algorithm (5)
+%% TwIST algorithm 
 
 % denoising function;
 tv_iters = 2;
 Psi = @(x,th) tvdenoise(x,2/th,tv_iters);
 % TV regularizer;
 Phi = @(x) TVnorm(x);
-% Phi = @(x) sum(sum(sqrt(diffh(x).^2+diffv(x).^2)));
 
-tau = 100; 
+tau = 0.05; 
 tolA = 1e-6;
 iterations = 50;
 [f_reconstruct,dummy,obj_twist,...

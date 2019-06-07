@@ -2,7 +2,7 @@ clearvars; clc; close all
 
 addpath('./functions');
 
-Im = im2double(imread('./image/cameraman.png'));
+Im = im2double(imread('./image/raw_image.png'));
 
 Xc = 1760; % Xc = 1760;
 Yc = 1700; % Yc = 1700;
