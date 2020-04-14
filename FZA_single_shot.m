@@ -3,7 +3,7 @@ clearvars; clc; close all
 addpath('./functions');
 
 %% Pingole imaging
-% img = im2double(imread('.\image\THU.png'));
+% img = im2double(imread('THU.png'));
 img = im2double(imread('cameraman.tif'));
 
 di = 3;         % the distance from mask to sensor
@@ -30,7 +30,8 @@ ri = (1+M)*r1;
 
 mask = FZA(S,2*Nx,ri);  % generate the FZA mask
 
-I = conv2(Im,mask,'same')*2*dp*dp/ri^2;
+I = conv2(Im,mask,'same')*2*dp*dp/ri^2; % 2*dp*dp/ri^2 ensure the values are same with I1
+I = I - mean(I(:));
 
 figure,imagesc(mask);title('FZA pattern')
 colormap gray;
@@ -67,9 +68,9 @@ Psi = @(x,th) tvdenoise(x,2/th,tv_iters);
 % TV regularizer;
 Phi = @(x) TVnorm(x);
 
-tau = 0.05; 
+tau = 0.005; 
 tolA = 1e-6;
-iterations = 50;
+iterations = 200;
 [f_reconstruct,dummy,obj_twist,...
     times_twist,dummy,mse_twist]= ...
     TwIST(I,A,tau,...
