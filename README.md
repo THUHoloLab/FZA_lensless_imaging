@@ -4,6 +4,9 @@ The MATLAB codes allow simulation/experiment and compressive reconstruction of a
 
 Jiachen Wu, Hua Zhang, Wenhui Zhang, Guofan Jin, Liangcai Cao, and George Barbastathis, "Single-shot lensless imaging with fresnel zone aperture and incoherent illumination," Light: Science & Applications 9, 53 (2020).
 
+Jiachen Wu, Liangcai Cao, and George Barbastathis, "DNN-FZA camera: a deep learning approach toward broadband FZA lensless imaging," Optics Letters 46, 130-133 (2021).
+
+
 https://www.nature.com/articles/s41377-020-0289-9
 
 FZA_single_shot.m	- simulate the FZA imaging and reconstruction
