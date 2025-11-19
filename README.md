@@ -13,6 +13,5 @@ FZA_single_shot.m	- simulate the FZA imaging and reconstruction
 
 FZA_single_shot_experiment.m	- reconstruct from experimental image
 
-Contact: wjc18@mails.tsinghua.edu.cn
 Contact: clc@tsinghua.edu.cn
 
